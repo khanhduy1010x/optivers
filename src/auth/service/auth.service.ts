@@ -9,6 +9,7 @@ import { ErrorCode } from 'src/common/exceptions/error-code.enum';
 import { User } from 'src/modules/users/schemas/user.chema';
 import { UserSessionService } from 'src/modules/users/service/user-session.service';
 import { UserService } from 'src/modules/users/service/user.service';
+import { LoginResponse } from '../dto/LoginResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -26,11 +27,11 @@ export class AuthService {
     return user;
   }
 
-  async login(user: any): Promise<ApiResponse<any>> {
+  async login(user: any): Promise<ApiResponse<LoginResponse>> {
     const access_token = await this.generateAccessToken(user);
     const refresh_token = await this.generateRefreshToken(user);
     this.userSessionService.handleSaveTokenLogin({user_id: user._id,device_info: user.device_info ,access_token,refresh_token,ip_address: user.ip_address})
-    return new ApiResponse({access_token: access_token})
+    return new ApiResponse<LoginResponse>({access_token: access_token,refresh_token: refresh_token})
   }
 
   async generateAccessToken(user: any): Promise<string> {
